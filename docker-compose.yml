@@ -1,0 +1,32 @@
+version: "3.7"
+
+#networks:
+#  default:
+#    external:
+#      name: overall_network
+
+services:
+  db_blog:
+    image: postgres:latest
+    restart: always
+    container_name: db_blog
+    ports:
+      - "5435:5432"
+    env_file:
+      - ./.env.postges
+    volumes:
+      - ./postgres-data/blog:/var/lib*/postgresql/data
+      - /var/lib/docker/volumes/docker_backup/_data:/var/lib/postgresql/backup
+
+  backend:
+    container_name: backend
+    build:
+      dockerfile: Dockerfile
+    volumes:
+      - .:/code
+    tty: true
+    ports:
+      - "5000:5000"
+    command: python manage.py run -h 0.0.0.0
+    env_file:
+      - ./.env.backend
