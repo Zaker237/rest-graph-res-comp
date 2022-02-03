@@ -2,13 +2,16 @@ from flask_restful import reqparse
 
 blog_get_parser = reqparse.RequestParser()
 blog_get_parser.add_argument(
-    "id",
+    "user",
     required=True,
     type=int,
     location=["args", "values", "form", "json", "headers"]
 )
-
-
+blog_get_parser.add_argument(
+    "blog",
+    type=int,
+    location=["args", "values", "form", "json", "headers"]
+)
 
 blog_post_parser = reqparse.RequestParser()
 blog_post_parser.add_argument(

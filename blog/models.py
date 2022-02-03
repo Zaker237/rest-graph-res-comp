@@ -52,6 +52,7 @@ class Post(db.Model):
     def to_dict(self):
         return dict(
             id=self.id,
+            author=self.user.username,
             title=self.title,
             intro=self.intro,
             subtitle1=self.subtitle1,
