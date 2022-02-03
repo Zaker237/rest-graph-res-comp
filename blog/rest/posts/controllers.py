@@ -28,6 +28,7 @@ def format_blog(blog):
     return {
         "id": blog.id,
         "author": blog.user.username,
+        "genre": blog.category.name,
         "title": blog.title,
         "intro": blog.intro,
         "subtitle1": blog.subtitle1,

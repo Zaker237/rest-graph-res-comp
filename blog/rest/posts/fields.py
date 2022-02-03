@@ -13,6 +13,7 @@ comment_get_fields = {
 blog_get_fields = {
     "id": fields.Integer(),
     "author": fields.String(),
+    "genre": fields.String(),
     "title": fields.String(),
     "intro": fields.String(),
     "subtitle1": fields.String(),

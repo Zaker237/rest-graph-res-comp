@@ -3,11 +3,12 @@ import requests
 import json
 import random
 
+from faker import Faker
 from blog import app, db
-from blog.models import User, Post, Comment
+from blog.models import User, Post, Comment, Category
 from flask_bcrypt import generate_password_hash
 
-API_ENDPOINT = "https://quizapi.io/api/v1/questions"
+faker = Faker()
 
 def create_db():
     db.drop_all()
@@ -29,88 +30,75 @@ def create_user():
 
     return user.id
 
-def create_cat():
+def create_categories():
     cat = Category()
-    cat.name = "Computer Science"
-    cat.description = "This Category should contend Survey related to Computer Science"
+    cat.name = "first Category"
+    cat.description = faker.text(max_nb_chars=500)
+    
+    cat2 = Category()
+    cat2.name = "second Category"
+    cat2.description = faker.text(max_nb_chars=500)
+    
+    cat3 = Category()
+    cat3.name = "third Category"
+    cat3.description = faker.text(max_nb_chars=500)
 
     db.session.add(cat)
+    db.session.add(cat2)
+    db.session.add(cat3)
     db.session.commit()
 
     return cat.id
 
-def create_blog_posts(topic, user_id, cat_id, avatar_id):
-    survey = Survey()
-    survey.title = topic + "'s Survey"
-    survey.description = f"This a a Survey about {topic}. it contents 10 questions."
-    survey.category_id = cat_id
-    survey.user_id = user_id
-    survey.avatar_id = avatar_id
+def get_category():
+    cats = Category.query.all()
+    index = random.randint(0, len(cats)-1)
+    cat = cats[index]
 
-    db.session.add(survey)
-    db.session.commit()
+    return cat.id
 
-    return survey.id
+def create_blog_posts(user_id, cat_id, num_post):
+    for i in num_post:
+        post = Post()
+        post.title = f"Blog post number {i}"
+        post.user_id = user_id
+        post.category_id = cat_id
 
-def create_avatars():
-    avatar1 = Avatar()
-    avatar1.name = "avatar 1"
-    avatar1.link = os.environ.get("API_BASE_ENDPOINT") + "img/q1.png"
-    db.session.add(avatar1)
+        post.subtitle1 = faker.sentence()
+        post.title1 = faker.text(max_nb_chars=1000)
+        post.subtitle2 = faker.sentence()
+        post.title2 = faker.text(max_nb_chars=1000)
+        post.subtitle3 = faker.sentence()
+        post.title3 = faker.text(max_nb_chars=1000)
+        post.subtitle4 = faker.sentence()
+        post.title4 = faker.text(max_nb_chars=1000)
+        post.subtitle5 = faker.sentence()
+        post.title5 = faker.text(max_nb_chars=1000)
 
-    avatar2 = Avatar()
-    avatar2.name = "avatar 2"
-    avatar2.link = os.environ.get("API_BASE_ENDPOINT") + "img/q2.png"
-    db.session.add(avatar2)
+        db.session.add(post)
+        db.session.commit()
 
-    avatar3 = Avatar()
-    avatar3.name = "avatar 3"
-    avatar3.link = os.environ.get("API_BASE_ENDPOINT") + "img/q3.png"
-    db.session.add(avatar3)
+def create_comments(user_id, num_comments):
+    for _ in num_comments:
+        post_id = get_post()
+        comment = Comment()
+        comment.post_id = post_id
+        comment.user_id = user_id
+        comment.text = faker.text(max_nb_chars=600)
 
-    db.session.commit()
-
-def get_avatar():
-    avatars = Avatar.query.all()
-    index = random.randint(0, len(avatars)-1)
-    avatar = avatars[index]
-
-    return avatar.id
-
+        db.session.add(comment)
+        db.session.commit()
 
 def main():
+    create_categories()
+    num_post = 10000
+    num_comments = 50000
     cat_id = create_cat()
     user_id = create_user()
-    
+    cat_id = get_category()
 
-    for topic in TOPICS:
-        avatar_id = get_avatar()
-        survey_id = create_survey(topic, user_id, cat_id, avatar_id)
-        questions = fetch_10_questions(API_ENDPOINT, topic, api_key)
-
-        for quest in questions:
-            question = Question()
-            question.text = quest["question"]
-            question.is_multi = False if quest["multiple_correct_answers"] == "false" else True
-            question.survey_id = survey_id
-            question.user_id = user_id
-
-            db.session.add(question)
-            db.session.commit()
-            
-            answers = list(quest["answers"].values())
-            true_answers = list(quest["correct_answers"].values())
-
-            for i in range(len(answers)):
-                if answers[i]:
-                    choice = Choice()
-                    choice.text = answers[i]
-                    choice.is_answer = True if true_answers[i] == "true" else False
-                    choice.question_id = question.id
-                    choice.user_id = user_id
-
-                    db.session.add(choice)
-                    db.session.commit()
+    create_blog_posts(user_id, cat_id, num_post)
+    create_comments(user_id, num_comments)
 
 
 if __name__ == "__main__":
