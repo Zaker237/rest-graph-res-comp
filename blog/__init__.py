@@ -21,7 +21,6 @@ from rest.api import create_module as api_create_module
 from blog.graphql.schema import Query, Mutation
 
 api_create_module(app)
-
 schema = graphene.Schema(query=Query, mutation=Mutation)
 
 # Routes

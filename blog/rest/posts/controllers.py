@@ -17,6 +17,13 @@ from .fields import (
     blog_delete_fields
 )
 
+def format_comment(comment):
+    return {
+        "id": comment.id,
+        "text": coment.text,
+        "created_at": comment.created_at.strftime('%Y-%m-%d %H:%M:%S')
+    }
+
 def format_blog(blog):
     return {
         "id": blog.id,
@@ -34,7 +41,7 @@ def format_blog(blog):
         "subtitle5": blog.subtitle5,
         "subtext5": blog.subtext5,
         "created_at": blog.created_at.strftime('%Y-%m-%d %H:%M:%S')
-        #"comments": blog.comments
+        "comments": list(map(format_comment, blog.comments))
     }
 
 class BlogApi(Resource):

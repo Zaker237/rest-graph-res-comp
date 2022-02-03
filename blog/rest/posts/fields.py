@@ -4,6 +4,12 @@ class MyDateFormat(fields.Raw):
     def format(self, value):
         return value.strftime('%Y-%m-%d')
 
+comment_get_fields = {
+    "id": fields.String(),
+    "text": fields.String(),
+    "created_at": MyDateFormat()
+}
+
 blog_get_fields = {
     "id": fields.Integer(),
     "author": fields.String(),
@@ -19,7 +25,8 @@ blog_get_fields = {
     "subtext4": fields.String(),
     "subtitle5": fields.String(),
     "subtext5": fields.String(),
-    "created_at": MyDateFormat()
+    "created_at": MyDateFormat(),
+    "comments": fields.List(comment_get_fields)
 }
 
 blog_post_fields = {
