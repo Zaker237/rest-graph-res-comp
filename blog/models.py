@@ -27,6 +27,21 @@ class User(db.Model):
         )
 
 
+class Category(db.Model):
+    __tablename__ = 'category'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(150), unique=True, nullable=False)
+    description = db.Column(db.Text)
+    posts = db.relationship('Post', backref="category", lazy=True)
+
+    def to_dict(self):
+        return dict(
+            id=self.id,
+            name=self.name,
+            description=self.description
+        )
+
 class Post(db.Model):
     __tablename__ = 'post'
 
@@ -46,13 +61,14 @@ class Post(db.Model):
     conclusion = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     comments = db.relationship('Comment', backref="post", lazy=True)
-    
 
     def to_dict(self):
         return dict(
             id=self.id,
             author=self.user.username,
+            genre=self.category.name,
             title=self.title,
             intro=self.intro,
             subtitle1=self.subtitle1,
