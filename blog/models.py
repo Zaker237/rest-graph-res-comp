@@ -82,7 +82,6 @@ class Post(db.Model):
             subtitle5=self.subtitle5,
             subtext5=self.subtext5,
             created_at=self.created_at.strftime('%Y-%m-%d %H:%M:%S')
-            comments=self.comments
         )
 
 

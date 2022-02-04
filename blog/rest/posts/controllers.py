@@ -3,6 +3,7 @@ import re
 from blog import db, app
 from flask import abort, jsonify, request
 from flask_restful import Resource, fields, marshal_with
+from sqlalchemy.orm import load_only
 from blog.models import User, Post
 from .parsers import (
     blog_get_parser,
@@ -49,32 +50,37 @@ class BlogApi(Resource):
     @marshal_with(blog_get_fields)
     def get(self):
         args = blog_get_parser.parse_args()
-
-        user_id = args["user"]
-        user = User.query.get(user_id)
-        if not user_id:
-            abort(404)
+        with_comments = args["comments"]
 
         if args["blog"]:
             blog = Post.query.get(args["blog"])
             if not blog:
                 abort(404)
             
-            return format_blog(blog), 200
+            if with_comments:
+                return format_blog(blog), 200
+            else:
+                return blog.to_dict(), 200
         else:
             blogs = Post.query.all()
 
-            return [format_blog(blog) for blog in blogs], 200
+            if with_comments:
+                return [format_blog(blog) for blog in blogs], 200
+            else:
+                return [blog.to_dict() for blog in blogs], 200
 
+class BlogTitleApi(Resource):
+    @marshal_with(blog_title_get_fields)
+    def get(self):
+        args = blog_get_parser.parse_args()
 
-    @marshal_with(blog_post_fields)
-    def post(self):
-        pass
+        fields = ["id", "title", "intro", "subtitle1", "subtitle2", "subtitle3", "subtitle4", "subtitle5"]
+        blogs = db.session.query(Post).options(load_only(*fields)).all()
 
-    @marshal_with(blog_put_fields)
-    def put(self):
-        pass
+class BlogtexteApi(Resource):
+    @marshal_with(blog_title_get_fields)
+    def get(self):
+        args = blog_get_parser.parse_args()
 
-    @marshal_with(blog_delete_fields)
-    def delete(self):
-        pass
+        fields = ["id", "subtext1", "subtext2", "subtext3", "subtext4", "subtext5", "conclusion"]
+        blogs = db.session.query(Post).options(load_only(*fields)).all()
