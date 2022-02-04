@@ -44,6 +44,7 @@ def format_blog(blog):
         "subtext4": blog.subtext4,
         "subtitle5": blog.subtitle5,
         "subtext5": blog.subtext5,
+        "conclusion": blog.conclusion,
         "created_at": blog.created_at.strftime('%Y-%m-%d %H:%M:%S')
         "comments": list(map(format_comment, blog.comments))
     }
@@ -57,7 +58,7 @@ def format_blog_title(blog):
         "subtext2": blog.subtext2,
         "subtitle3": blog.subtitle3,
         "subtitle4": blog.subtitle4,
-        "subtitle5": blog.subtitle5,
+        "subtitle5": blog.subtitle5
     }
 
 def format_blog_text(blog):
@@ -67,7 +68,7 @@ def format_blog_text(blog):
         "subtext3": blog.subtext3,
         "subtext4": blog.subtext4,
         "subtext5": blog.subtext5,
-        "conclusion": blog.conclusion,
+        "conclusion": blog.conclusion
     }
 
 class BlogApi(Resource):

@@ -27,6 +27,7 @@ blog_get_fields = {
     "subtitle5": fields.String,
     "subtext5": fields.String,
     "created_at": MyDateFormat,
+    "conclusion": fields.String,
     "comments": fields.List(comment_get_fields, None)
 }
 
