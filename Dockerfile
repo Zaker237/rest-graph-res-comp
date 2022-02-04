@@ -30,7 +30,7 @@ RUN pip install -r requirements.txt
 
 
 # chown all the files to the app user
-RUN chown -R hoc:hoc $APP_HOME
+RUN chown -R blog:blog $APP_HOME
 RUN chmod +x $APP_HOME
 
 # change to the app user

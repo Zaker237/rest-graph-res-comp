@@ -45,7 +45,7 @@ def format_blog(blog):
         "subtitle5": blog.subtitle5,
         "subtext5": blog.subtext5,
         "conclusion": blog.conclusion,
-        "created_at": blog.created_at.strftime('%Y-%m-%d %H:%M:%S')
+        "created_at": blog.created_at.strftime('%Y-%m-%d %H:%M:%S'),
         "comments": list(map(format_comment, blog.comments))
     }
 

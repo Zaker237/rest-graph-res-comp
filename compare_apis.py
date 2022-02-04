@@ -1,13 +1,31 @@
 import requests
 import datetime
 
-REST_API_ENDPOINT = "http://localhost:5000/rest/blog"
-GRAPHQL_API_ENDPOINT = "http://localhost:5000/graphql"
-
 def fetch_data_rest(with_comment=True):
     start = datetime.datetime.now()
 
-    response = requests.get(REST_API_ENDPOINT)
+    response = requests.get(
+        "http://localhost:5000/rest/blog",
+        params={"comments": with_comment}
+    )
+    data = response.json()
+    end = datetime.datetime.now()
+
+    return end - start
+
+def fetch_data_rest_title():
+    start = datetime.datetime.now()
+
+    response = requests.get("http://localhost:5000/rest/blog-title")
+    data = response.json()
+    end = datetime.datetime.now()
+
+    return end - start
+
+def fetch_data_rest_text():
+    start = datetime.datetime.now()
+
+    response = requests.get("http://localhost:5000/rest/blog-text")
     data = response.json()
     end = datetime.datetime.now()
 
@@ -19,7 +37,7 @@ def fetch_data_graphql(with_comment=True):
 
     if with_comment:
         query = """query {
-            post(user: '{}'){
+            posts{
                 id
                 title
                 intro
@@ -62,7 +80,7 @@ def fetch_data_graphql(with_comment=True):
         }""".format(user_id)
     else:
         query = """query {
-            post(user: '{}'){
+            posts{
                 id
                 title
                 intro
@@ -93,10 +111,10 @@ def fetch_data_graphql(with_comment=True):
                     }
                 }
             }
-        }""".format(user_id)
+        }"""
 
     response = requests.post(
-        GRAPHQL_API_ENDPOINT,
+        "http://localhost:5000/graphql",
         json={"query": query}
     )
     data = json.loads(response.text)["data"]
@@ -109,7 +127,7 @@ def fetch_data_graphql_title():
     start = datetime.datetime.now()
 
     query = """query {
-        post(user: '{}'){
+        posts{
             id
             title
             intro
@@ -119,10 +137,10 @@ def fetch_data_graphql_title():
             subtitle4
             subtitle5
         }
-    }""".format(user_id)
+    }"""
 
     response = requests.post(
-        GRAPHQL_API_ENDPOINT,
+       "http://localhost:5000/graphql",
         json={"query": query}
     )
     data = json.loads(response.text)["data"]
@@ -131,11 +149,11 @@ def fetch_data_graphql_title():
 
     return end - start
 
-def fetch_data_graphql_title():
+def fetch_data_graphql_text():
     start = datetime.datetime.now()
 
     query = """query {
-        post(user: '{}'){
+        posts{
             id
             subtext1
             subtext2
@@ -144,10 +162,10 @@ def fetch_data_graphql_title():
             subtext5
             conclusion
         }
-    }""".format(user_id)
+    }"""
 
     response = requests.post(
-        GRAPHQL_API_ENDPOINT,
+        "http://localhost:5000/graphql",
         json={"query": query}
     )
     data = json.loads(response.text)["data"]
@@ -157,8 +175,24 @@ def fetch_data_graphql_title():
     return end - start
 
 
-def main():
-    pass
+def get_times():
+    result = {}
 
-if __name__:
+    result["REST_WITH_COMMENT"] = fetch_data_rest(True)
+    result["REST_WITHOUT_COMMENT"] = fetch_data_rest(False)
+    result["GRAPHQL_WITH_COMMENT"] = fetch_data_graphql(True)
+    result["GRAPHQL_WITHOUT_COMMENT"] = fetch_data_graphql(False)
+    result["REST_TITLE"] = fetch_data_rest_title()
+    result["REST_TEXT"] = fetch_data_rest_text()
+    result["GRAPHQL_TITLE"] = fetch_data_graphql_title()
+    result["GRAPHQL_TEXT"] = fetch_data_graphql_text()
+
+    return result
+
+def main():
+    data = get_times()
+
+    print(f"the data are: ", data)
+
+if __name__ == "__main__":
     main()

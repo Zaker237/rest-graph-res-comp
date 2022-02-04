@@ -13,7 +13,7 @@ services:
     ports:
       - "5435:5432"
     env_file:
-      - ./.env.postges
+      - ./.env.postgres
     volumes:
       - ./postgres-data/blog:/var/lib*/postgresql/data
       - /var/lib/docker/volumes/docker_backup/_data:/var/lib/postgresql/backup
@@ -21,12 +21,15 @@ services:
   backend:
     container_name: backend
     build:
+      context: ./
       dockerfile: Dockerfile
     volumes:
       - .:/code
     tty: true
     ports:
       - "5000:5000"
-    command: python manage.py run -h 0.0.0.0
+    command: sh ./run.sh
     env_file:
       - ./.env.backend
+    depends_on:
+      - db_blog

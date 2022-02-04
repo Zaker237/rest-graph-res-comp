@@ -1,6 +1,8 @@
-from blog import db, app
+import graphene
 
-from blog.models import User, Post, Comment, abort
+from blog import db, app
+from flask import abort
+from blog.models import User, Post, Comment
 from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
 from graphql_relay.node.node import from_global_id
 
@@ -24,15 +26,11 @@ class CommentObject(SQLAlchemyObjectType):
 class Query(graphene.ObjectType):
     posts = graphene.List(
         PostObject,
-        user=graphene.Int(required=True),
         blog=graphene.Int()
     )
 
     @staticmethod
-    def resolve_posts(parent, info, user, blog=None):
-        user = User.query.get(user)
-        if not user:
-            abort(404)
+    def resolve_posts(parent, info, blog=None):
 
         if blog:
             data = Post.query.get(blog)
@@ -42,5 +40,5 @@ class Query(graphene.ObjectType):
         return query
 
 
-class Query(graphene.ObjectType):
-    pass
+# class Mutation(graphene.ObjectType):
+#     pass

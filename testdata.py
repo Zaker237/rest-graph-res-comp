@@ -57,10 +57,17 @@ def get_category():
 
     return cat.id
 
+def get_post():
+    posts = Post.query.all()
+    index = random.randint(0, len(posts)-1)
+    post = posts[index]
+
+    return post.id
+
 def create_blog_posts(user_id, cat_id, num_post):
-    for i in num_post:
+    for i in range(num_post):
         post = Post()
-        post.title = f"Blog post number {i}"
+        post.title = f"Blog post number {i+1}"
         post.user_id = user_id
         post.category_id = cat_id
 
@@ -79,7 +86,7 @@ def create_blog_posts(user_id, cat_id, num_post):
         db.session.commit()
 
 def create_comments(user_id, num_comments):
-    for _ in num_comments:
+    for _ in range(num_comments):
         post_id = get_post()
         comment = Comment()
         comment.post_id = post_id
@@ -93,7 +100,6 @@ def main():
     create_categories()
     num_post = 10000
     num_comments = 50000
-    cat_id = create_cat()
     user_id = create_user()
     cat_id = get_category()
 

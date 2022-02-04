@@ -8,9 +8,10 @@ then
 
     echo "PostgreSQL started"
 fi
-gunicorn --bind 0.0.0.0:5000 manage:app
+# gunicorn --bind 0.0.0.0:5000 manage:app
 
-python testdata.py
+# python testdata.py
 
-python compare_apis.py
+# python compare_apis.py
+python server.py
 exec "$@"
