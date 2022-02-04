@@ -15,7 +15,9 @@ from .fields import (
     blog_get_fields,
     blog_post_fields,
     blog_put_fields,
-    blog_delete_fields
+    blog_delete_fields,
+    blog_text_get_fields,
+    blog_title_get_fields
 )
 
 def format_comment(comment):
@@ -44,6 +46,28 @@ def format_blog(blog):
         "subtext5": blog.subtext5,
         "created_at": blog.created_at.strftime('%Y-%m-%d %H:%M:%S')
         "comments": list(map(format_comment, blog.comments))
+    }
+
+def format_blog_title(blog):
+    return {
+        "id": blog.id,
+        "title": blog.title,
+        "intro": blog.intro,
+        "subtext1": blog.subtext1,
+        "subtext2": blog.subtext2,
+        "subtitle3": blog.subtitle3,
+        "subtitle4": blog.subtitle4,
+        "subtitle5": blog.subtitle5,
+    }
+
+def format_blog_text(blog):
+    return {
+        "subtext1": blog.subtext1,
+        "subtext2": blog.subtext2,
+        "subtext3": blog.subtext3,
+        "subtext4": blog.subtext4,
+        "subtext5": blog.subtext5,
+        "conclusion": blog.conclusion,
     }
 
 class BlogApi(Resource):
@@ -77,10 +101,14 @@ class BlogTitleApi(Resource):
         fields = ["id", "title", "intro", "subtitle1", "subtitle2", "subtitle3", "subtitle4", "subtitle5"]
         blogs = db.session.query(Post).options(load_only(*fields)).all()
 
+        return [format_blog_title(blog) for blog in blogs], 200
+
 class BlogtexteApi(Resource):
-    @marshal_with(blog_title_get_fields)
+    @marshal_with(blog_text_get_fields)
     def get(self):
         args = blog_get_parser.parse_args()
 
         fields = ["id", "subtext1", "subtext2", "subtext3", "subtext4", "subtext5", "conclusion"]
         blogs = db.session.query(Post).options(load_only(*fields)).all()
+
+        return [format_blog_text(blog) for blog in blogs], 200
