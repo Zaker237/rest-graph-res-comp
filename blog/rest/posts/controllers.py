@@ -23,7 +23,7 @@ from .fields import (
 def format_comment(comment):
     return {
         "id": comment.id,
-        "text": coment.text,
+        "text": comment.text,
         "created_at": comment.created_at.strftime('%Y-%m-%d %H:%M:%S')
     }
 

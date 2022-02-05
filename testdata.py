@@ -8,8 +8,6 @@ from blog import app, db
 from blog.models import User, Post, Comment, Category
 from flask_bcrypt import generate_password_hash
 
-faker = Faker()
-
 def create_db():
     db.drop_all()
     db.session.commit()
@@ -30,18 +28,18 @@ def create_user():
 
     return user.id
 
-def create_categories():
+def create_categories(faker):
     cat = Category()
     cat.name = "first Category"
-    cat.description = faker.text(max_nb_chars=500)
+    cat.description = faker.sentence()
     
     cat2 = Category()
     cat2.name = "second Category"
-    cat2.description = faker.text(max_nb_chars=500)
+    cat2.description = faker.sentence()
     
     cat3 = Category()
     cat3.name = "third Category"
-    cat3.description = faker.text(max_nb_chars=500)
+    cat3.description = faker.sentence()
 
     db.session.add(cat)
     db.session.add(cat2)
@@ -64,51 +62,57 @@ def get_post():
 
     return post.id
 
-def create_blog_posts(user_id, cat_id, num_post):
+def create_blog_posts(user_id, num_post, faker):
     for i in range(num_post):
         post = Post()
         post.title = f"Blog post number {i+1}"
         post.user_id = user_id
-        post.category_id = cat_id
+        post.category_id = get_category()
 
+        post.intro = ". ".join(faker.texts(nb_texts=6))
         post.subtitle1 = faker.sentence()
-        post.title1 = faker.text(max_nb_chars=1000)
+        post.subtext1 = ". ".join(faker.texts(nb_texts=10))
         post.subtitle2 = faker.sentence()
-        post.title2 = faker.text(max_nb_chars=1000)
+        post.subtext2 = ". ".join(faker.texts(nb_texts=10))
         post.subtitle3 = faker.sentence()
-        post.title3 = faker.text(max_nb_chars=1000)
+        post.subtext3 = ". ".join(faker.texts(nb_texts=10))
         post.subtitle4 = faker.sentence()
-        post.title4 = faker.text(max_nb_chars=1000)
+        post.subtext4 = ". ".join(faker.texts(nb_texts=10))
         post.subtitle5 = faker.sentence()
-        post.title5 = faker.text(max_nb_chars=1000)
+        post.subtext5 = ". ".join(faker.texts(nb_texts=10))
+        post.conclusion = ". ".join(faker.texts(nb_texts=10))
 
         db.session.add(post)
         db.session.commit()
 
-def create_comments(user_id, num_comments):
+def create_comments(user_id, num_comments, faker):
     for _ in range(num_comments):
         post_id = get_post()
         comment = Comment()
         comment.post_id = post_id
         comment.user_id = user_id
-        comment.text = faker.text(max_nb_chars=600)
+        comment.text = ". ".join(faker.texts(nb_texts=10))
 
         db.session.add(comment)
         db.session.commit()
 
-def main():
-    create_categories()
+def main(faker):
+    create_categories(faker)
     num_post = 10000
     num_comments = 50000
     user_id = create_user()
-    cat_id = get_category()
 
-    create_blog_posts(user_id, cat_id, num_post)
-    create_comments(user_id, num_comments)
+    print("--------start post----------")
+    create_blog_posts(user_id, num_post, faker)
+    print("--------End post----------")
+    print("--------start comments----------")
+    create_comments(user_id, num_comments, faker)
+    print("--------End comment----------")
 
 
 if __name__ == "__main__":
-    print("--------Start Creating fake data______")
+    print("--------Start Creating fake data----------")
     create_db()
-    main()
-    print("--------End______")
+    faker = Faker()
+    main(faker)
+    print("--------End----------")

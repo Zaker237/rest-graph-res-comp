@@ -24,7 +24,7 @@ services:
       context: ./
       dockerfile: Dockerfile
     volumes:
-      - .:/code
+      - .:/home/app/blog
     tty: true
     ports:
       - "5000:5000"
