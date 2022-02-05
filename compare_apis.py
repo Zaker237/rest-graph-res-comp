@@ -184,14 +184,16 @@ def save_result_as_png(data):
     names = list(data.keys())
     values = list(data.values())
 
-    fig = plt.figure()
+    pos = range(len(names))
+    l = ["blue", "orange", "green", "red", "purple", "cyan", "olive", "gray"]
 
-    ax = fig.add_axes([0,0,1,1])
-    ax.bar(names, values)
-    ax.set_ylabel("Times in s")
-    ax.set_title("Result of the experience")
-    plt.savefig('result.png')
-    plt.close(fig) 
+    plt.bar(names, values, color=l)
+    # plt.xticks(pos, names)
+    plt.xlabel("Differents Experiences", fontsize=12)
+    plt.ylabel("Times in s")
+    plt.title("Result of the experience")
+    plt.legend(names)
+    plt.savefig('result.png') 
 
 
 def main():
